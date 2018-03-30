@@ -17,6 +17,10 @@ import com.example.matteobellinaso.metereologia.data.Weather;
 import com.example.matteobellinaso.metereologia.utility.DataAccess;
 import com.example.matteobellinaso.metereologia.utility.GsonRequest;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -41,6 +45,12 @@ public class DetailActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+       Date date = Calendar.getInstance().getTime();
+       DateFormat format = new SimpleDateFormat("hh:mm");
+       final String today = format.format(date);
+
+
+
         Intent intent = getIntent();
         final int selectedItem = intent.getIntExtra(MainActivity.EXTRA_SELECTED_ITEM , 0);
 
@@ -62,10 +72,10 @@ public class DetailActivity extends Activity {
        GsonRequest jsonObjectReq = new GsonRequest( url, City.class,null , new Response.Listener<City>() {
            @Override
            public void onResponse(City response) {
-               textMain.setText("tempo: "+response.getWeather().get(0).getMain());
-               textDesc.setText("cielo: " + response.getWeather().get(0).getDescription());
-               textTemp.setText("temperatura: " + response.getMain().getTemp());
-               textHum.setText("umidità: " + response.getMain().getHumidity());
+               textMain.setText(response.getWeather().get(0).getMain());
+               textDesc.setText( response.getWeather().get(0).getDescription());
+               textTemp.setText("" + response.getMain().getTemp());
+               textHum.setText(today);
                String icon = response.getWeather().get(0).getIcon();
 
                switch(icon){
@@ -95,5 +105,4 @@ public class DetailActivity extends Activity {
    }
 
 
-   Date date = new Date();
 }
