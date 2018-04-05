@@ -16,10 +16,12 @@ public class DataAccess {
 
     public static void  initData(Context context){
 
+        City current = new City("Current Position");
         City milano = new City("Milano");
         City piacenza = new City("Piacenza");
         City bologna = new City("Bologna");
 
+        dataAdd(context.getApplicationContext(), current);
         dataAdd(context.getApplicationContext(), milano);
         dataAdd(context.getApplicationContext(),piacenza);
         dataAdd(context.getApplicationContext(),bologna);

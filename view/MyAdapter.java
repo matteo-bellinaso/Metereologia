@@ -1,22 +1,36 @@
 package com.example.matteobellinaso.metereologia.view;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.matteobellinaso.metereologia.R;
 import com.example.matteobellinaso.metereologia.data.City;
 import com.example.matteobellinaso.metereologia.data.Singleton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * Created by matteobellinaso on 30/03/18.
@@ -93,6 +107,10 @@ import java.util.Random;
         }
 
 
-    }
+
+
+
+
+}
 
 

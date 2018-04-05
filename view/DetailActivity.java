@@ -1,7 +1,14 @@
 package com.example.matteobellinaso.metereologia.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,11 +24,14 @@ import com.example.matteobellinaso.metereologia.data.Weather;
 import com.example.matteobellinaso.metereologia.utility.DataAccess;
 import com.example.matteobellinaso.metereologia.utility.GsonRequest;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by matteobellinaso on 30/03/18.
@@ -29,7 +39,7 @@ import java.util.Date;
 
 public class DetailActivity extends Activity {
 
-    private int currentItem;
+    private String currentItem;
     private String preferito;
 
      TextView textCity;
@@ -54,9 +64,17 @@ public class DetailActivity extends Activity {
         Intent intent = getIntent();
         final int selectedItem = intent.getIntExtra(MainActivity.EXTRA_SELECTED_ITEM , 0);
 
-        currentItem = selectedItem;
+       if(selectedItem == 0){
+           currentItem = getCurrentCityName(this);
+       }else{
+           currentItem = DataAccess.getIndex(this, selectedItem).getName();
+       }
 
-        String url = "http://api.openweathermap.org/data/2.5/weather?q=" + DataAccess.getIndex(this,currentItem).getName() + "&units=metric&appid=2439d518e81cee90fd7a61cfe1109dd4";
+
+
+
+
+        String url = "http://api.openweathermap.org/data/2.5/weather?q=" +currentItem + "&units=metric&appid=2439d518e81cee90fd7a61cfe1109dd4";
 
         textCity = (TextView) findViewById(R.id.text_city);
         textMain = (TextView) findViewById(R.id.text_main);
@@ -67,14 +85,15 @@ public class DetailActivity extends Activity {
 
 
 
-        textCity.setText(DataAccess.getIndex(this, currentItem).getName());
+
+        textCity.setText(currentItem);
 
        GsonRequest jsonObjectReq = new GsonRequest( url, City.class,null , new Response.Listener<City>() {
            @Override
            public void onResponse(City response) {
                textMain.setText(response.getWeather().get(0).getMain());
                textDesc.setText( response.getWeather().get(0).getDescription());
-               textTemp.setText("" + response.getMain().getTemp());
+               textTemp.setText("" + response.getMain().getTemp()+ "°");
                textHum.setText(today);
                String icon = response.getWeather().get(0).getIcon();
 
@@ -85,7 +104,7 @@ public class DetailActivity extends Activity {
                    case "02d":
                        textImg.setImageDrawable(getResources().getDrawable(R.drawable.sun_and_rain_icon));
                        break;
-                   case "04d":
+                   case "10d":
                        textImg.setImageDrawable(getResources().getDrawable(R.drawable.sun));
                        break;
 
@@ -103,6 +122,30 @@ public class DetailActivity extends Activity {
 
 
    }
+
+
+    public static String getCurrentCityName(Context context){
+        LocationManager locationManager=(LocationManager)context.getSystemService(LOCATION_SERVICE);
+        Criteria criteria=new Criteria();
+
+        locationManager.getBestProvider(criteria, true);
+
+        @SuppressLint("MissingPermission") Location location= locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria,true));
+
+        Geocoder gcd=new Geocoder(context, Locale.getDefault());
+        List<Address> addresses;
+        String cityName = "";
+        try {
+            addresses=gcd.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+            if(addresses.size()>0){
+                cityName = addresses.get(0).getLocality().toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return cityName;
+    }
 
 
 }
